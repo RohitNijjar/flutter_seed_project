@@ -1,0 +1,62 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+    - "build/**"
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    # Enforce null safety
+    missing_required_param: error
+    missing_return: error
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at https://dart.dev/lints.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    - avoid_print
+    - prefer_single_quotes
+    - always_declare_return_types
+    - avoid_empty_else
+    - avoid_redundant_argument_values
+    - avoid_unused_constructor_parameters
+    - curly_braces_in_flow_control_structures
+    - prefer_const_constructors
+    - prefer_final_fields
+    - prefer_final_locals
+    - always_use_package_imports
+    - prefer_relative_imports
+    - avoid_unnecessary_containers
+    - prefer_interpolation_to_compose_strings
+    - annotate_overrides
+
+    # Naming conventions
+    - camel_case_types
+    - constant_identifier_names
+    - non_constant_identifier_names
+    - file_names:
+        regex: '^[_a-z0-9]+\.(dart|freezed|gr|g)\.dart$' # snake_case.dart
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
