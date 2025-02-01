@@ -45,7 +45,6 @@ linter:
     - prefer_const_constructors
     - prefer_final_fields
     - prefer_final_locals
-    - always_use_package_imports
     - prefer_relative_imports
     - avoid_unnecessary_containers
     - prefer_interpolation_to_compose_strings
