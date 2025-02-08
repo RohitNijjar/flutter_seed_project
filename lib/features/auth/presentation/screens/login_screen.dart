@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/route_paths.dart';
+import '../../../../core/auth/provider/auth_provider.dart';
+import '../../../../core/values/constants/route_paths.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/text_form_input/custom_text_form_input.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -28,8 +30,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     passwordController.dispose();
   }
 
+  void _login() {
+    ref.read(authProvider.notifier).login(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,9 +60,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 50),
                   Text(
                     'Login',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: AppColors.primaryDark,
+                        ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: AppSpacing.lg),
                   CustomTextFormInput(
                     controller: emailController,
                     hintText: 'Email',
@@ -64,7 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: AppSpacing.lg),
                   CustomTextFormInput(
                     controller: passwordController,
                     hintText: 'Password',
@@ -78,47 +91,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: AppSpacing.xs),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
                       style: TextButton.styleFrom(
-                          padding: const EdgeInsets.all(0),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          foregroundColor: AppColors.white),
+                        padding: const EdgeInsets.all(0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        foregroundColor: AppColors.scaffoldBackground,
+                      ),
                       child: Text(
                         'Forgot Password?',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w500,
-                              color: AppColors.primary,
+                              color: AppColors.primaryLight,
                             ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: AppSpacing.xl),
                   ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                    onPressed: authState.maybeWhen(orElse: () => _login),
+                    child: authState.maybeWhen(
+                      loading: () => const CircularProgressIndicator.adaptive(),
+                      orElse: () => const Text('Login'),
                     ),
-                    child: const Text('Login'),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: AppSpacing.lg),
                   Text(
                     'or',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.grey,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context)
+                              .extension<AppThemeExtension>()!
+                              .grey2,
                         ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: AppSpacing.lg),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondary,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                     child: const Text('Sign in with Google'),
                   ),
@@ -127,20 +141,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       text: 'New to the App? ',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.black,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.primaryDark,
                           ),
                       children: [
                         TextSpan(
                           text: 'Register',
                           style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: AppColors.primary,
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.primaryLight,
                                     fontWeight: FontWeight.w500,
                                   ),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => context.push(RoutePaths.register),
+                            ..onTap = () => authState.maybeWhen(
+                                  orElse: () => context.go(RoutePaths.register),
+                                ),
                         )
                       ],
                     ),

@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/config/injectable/injectable.dart';
 import '../../../../core/config/logger.dart';
-import '../../../../core/constants/route_paths.dart';
+import '../../../../core/values/constants/route_paths.dart';
 import '../states/splash_state.dart';
 
 @injectable
