@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/auth/utils/auth_message_resolver.dart';
 import '../../../../core/config/logger.dart';
-import '../../../../core/errors/failure.dart';
+import '../../../../core/utils/api_error_handler.dart';
+import '../../../../core/errors/failures.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/interfaces/iauth_repository.dart';
 import '../datasources/api/auth_api.dart';
@@ -23,9 +26,15 @@ class AuthRepository implements IAuthRepository {
       final response = await _authApi.login(loginRequest);
       logger.i(response);
       return right(response.data!.toEntity());
+    } on DioException catch (e) {
+      return left(
+        ApiErrorHandler.handleDioError(
+          e,
+          (errorCode) => AuthMessageResolver.resolveMessage(errorCode),
+        ),
+      );
     } catch (e) {
-      logger.e(e);
-      return left(const Failure('Testing error'));
+      return left(const ServerFailure());
     }
   }
 
@@ -37,9 +46,15 @@ class AuthRepository implements IAuthRepository {
       final response = await _authApi.register(registerRequest);
       logger.i(response);
       return right(response.data!.toEntity());
+    } on DioException catch (e) {
+      return left(
+        ApiErrorHandler.handleDioError(
+          e,
+          (errorCode) => AuthMessageResolver.resolveMessage(errorCode),
+        ),
+      );
     } catch (e) {
-      logger.e(e);
-      return left(const Failure('Testing error'));
+      return left(const ServerFailure());
     }
   }
 }

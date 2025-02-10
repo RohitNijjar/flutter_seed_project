@@ -24,20 +24,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   void _register() {
-    ref.read(authProvider.notifier).register(
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
-          email: emailController.text,
-          password: passwordController.text,
-        );
+    if (_formKey.currentState!.validate()) {
+      ref.read(authProvider.notifier).register(
+            firstName: firstNameController.text,
+            lastName: lastNameController.text,
+            email: emailController.text,
+            password: passwordController.text,
+          );
+    }
   }
 
   @override

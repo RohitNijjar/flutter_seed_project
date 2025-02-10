@@ -25,16 +25,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     emailController.dispose();
     passwordController.dispose();
+    super.dispose();
   }
 
   void _login() {
-    ref.read(authProvider.notifier).login(
-          email: emailController.text,
-          password: passwordController.text,
-        );
+    if (_formKey.currentState!.validate()) {
+      ref.read(authProvider.notifier).login(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+    }
   }
 
   @override
