@@ -1,11 +1,11 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../../core/errors/failure.dart';
+import '../../../../core/errors/failures.dart';
 import '../../data/dtos/login_request.dart';
 import '../../data/dtos/register_request.dart';
 import '../entities/user.dart';
 
-abstract class IAuthRepository {
+abstract interface class IAuthRepository {
   Future<Either<Failure, User>> register({
     required RegisterRequest registerRequest,
   });
