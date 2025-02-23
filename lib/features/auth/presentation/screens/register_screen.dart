@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/auth/provider/auth_provider.dart';
+import '../../../../core/utils/dialogs.dart';
+import '../../../../core/utils/validators.dart';
 import '../../../../core/values/constants/route_paths.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/text_form_input/custom_text_form_input.dart';
+import '../utils/auth_validators.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -46,6 +49,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
+    ref.listen(authProvider, (previous, next) {
+      next.maybeWhen(
+        authenticated: (user) {
+          Dialogs.showSnackBar(
+            context,
+            message: 'Success! you can now log in',
+          );
+          context.go(RoutePaths.login);
+        },
+        error: (error) {
+          Dialogs.showSnackBar(context, message: error);
+        },
+        orElse: () {},
+      );
+    });
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -81,24 +100,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         controller: firstNameController,
                         hintText: 'First Name',
                         iconStart: Icons.person,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your first name';
-                          }
-                          return null;
-                        },
+                        validator: (value) => Validators.isRequired(value,
+                            fieldName: 'First Name'),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       CustomTextFormInput(
                         controller: lastNameController,
                         hintText: 'Last Name',
                         iconStart: Icons.person,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter your last name';
-                          }
-                          return null;
-                        },
+                        validator: (value) => Validators.isRequired(value,
+                            fieldName: 'Last Name'),
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       CustomTextFormInput(
@@ -106,6 +117,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         hintText: 'Email Id',
                         iconStart: Icons.email,
                         inputType: TextInputType.emailAddress,
+                        validator: AuthValidators.isEmailValid,
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       CustomTextFormInput(
@@ -114,6 +126,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         iconStart: Icons.lock,
                         inputType: TextInputType.visiblePassword,
                         obscureText: true,
+                        validator: AuthValidators.isPasswordValid,
                       ),
                       const SizedBox(height: 25),
                     ],
