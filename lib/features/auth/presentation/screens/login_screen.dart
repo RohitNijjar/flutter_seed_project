@@ -5,11 +5,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/auth/provider/auth_provider.dart';
+import '../../../../core/utils/dialogs.dart';
 import '../../../../core/values/constants/route_paths.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/text_form_input/custom_text_form_input.dart';
+import '../utils/auth_validators.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -43,12 +45,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
 
+    ref.listen(authProvider, (previous, next) {
+      next.maybeWhen(
+        authenticated: (user) {
+          Dialogs.showSnackBar(
+            context,
+            message: 'Welcome back, ${user.email}!',
+          );
+          // context.go(RoutePaths.home);
+        },
+        error: (error) {
+          Dialogs.showSnackBar(context, message: error);
+        },
+        orElse: () {},
+      );
+    });
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.xl,
+            ),
             width: double.infinity,
             child: Form(
               key: _formKey,
@@ -72,12 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     hintText: 'Email',
                     inputType: TextInputType.emailAddress,
                     iconStart: Icons.email,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
+                    validator: AuthValidators.isEmailValid,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   CustomTextFormInput(
@@ -86,12 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     obscureText: true,
                     inputType: TextInputType.visiblePassword,
                     iconStart: Icons.lock,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
+                    validator: AuthValidators.isPasswordValid,
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Align(
