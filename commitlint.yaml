@@ -1,0 +1,16 @@
+extends:
+  - "@commitlint/config-conventional"
+
+rules:
+  type-enum:
+    - 2 # Error Level: 2 (fail commit if rule is broken)
+    - always
+    - [feat, bug, update, unit-test, refactor]
+  subject-case:
+    - 2
+    - always
+    - sentence-case
+  header-max-length:
+    - 2
+    - always
+    - 50
