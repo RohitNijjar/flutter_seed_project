@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "👀 Running pre-commit checks..."
 sh scripts/check_branch_name.sh
 dart run lint_staged
