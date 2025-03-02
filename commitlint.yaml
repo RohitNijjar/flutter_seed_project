@@ -1,16 +1,34 @@
-extends:
-  - "@commitlint/config-conventional"
+# Inherit configuration of a package
+include: package:commitlint_cli/commitlint.yaml
 
+# Custom rules
 rules:
   type-enum:
     - 2 # Error Level: 2 (fail commit if rule is broken)
     - always
-    - [feat, bug, update, unit-test, refactor]
+    - [FEAT, FIX, UPDATE, REFACTOR] # Only allow these types
+
+  type-empty:
+    - 0
+    - never # Disallow empty types
+
+  type-case:
+    - 2
+    - always
+    - "upper-case" # Enforce uppercase types
+
   subject-case:
     - 2
     - always
-    - sentence-case
+    - "sentence-case" # Ensure the message starts with uppercase
+
   header-max-length:
     - 2
     - always
-    - 50
+    - 50 # Limit commit message length to 72 chars
+
+# Whether commitlint uses the default ignore rules.
+defaultIgnores: true
+# Pattern that matches commit message if commitlint should ignore the given message.
+ignores:
+  - r'^fixup'
